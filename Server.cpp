@@ -1,15 +1,15 @@
-/*
+
 
 #define  _CRT_SECURE_NO_WARNINGS
 
-// ¶óÀÌºê·¯¸® °æ·Î ¼¼ÆÃ.(ÇÁ·ÎÁ§Æ® ÆÄÀÏ(.vcxproj)ÀÇ À§Ä¡¿¡¼­ÀÇ »ó´ë °æ·Î)
+// ë¼ì´ë¸ŒëŸ¬ë¦¬ ê²½ë¡œ ì„¸íŒ….(í”„ë¡œì íŠ¸ íŒŒì¼(.vcxproj)ì˜ ìœ„ì¹˜ì—ì„œì˜ ìƒëŒ€ ê²½ë¡œ)
 #define HNETWORK_LIB_PATH "../../HNetwork/Lib"
 
-// Çì´õ ÆÄÀÏ Æ÷ÇÔ.
+// í—¤ë” íŒŒì¼ í¬í•¨.
 #include "../../HNetwork/HNetwork.h"
 #include <ctime>
 
-// ¼­¹ö Á¤ÀÇ.
+// ì„œë²„ ì •ì˜.
 class CServer : public HNET::Acceptor
 {
     public: int sent_record = 0;
@@ -17,39 +17,42 @@ class CServer : public HNET::Acceptor
 
     void OnConnect(NetId netId) override
     {
-        HAPI::PrintG(1, sent_record, L"- connect");
-        sent_record += 1;
+        //HAPI::PrintG(1, sent_record, L"- connect");
+        //sent_record += 1;
         sc_sent += 1;
     }
 
     void OnDisconnect(NetId netId, const wchar_t* pReason) override
     {
-        HAPI::PrintR(1, sent_record, L"- disconnect");
-        sent_record += 1;
+        //HAPI::PrintR(1, sent_record, L"- disconnect");
+        //sent_record += 1;
+        //HAPI::PrintR(1, 1, L"TOTAL: ");
+        //printf("%d", sent_record);
         sc_sent += 1;
     }
 
-    // ÆÐÅ¶ ¼ö½Å ÇÔ¼ö
+    // íŒ¨í‚· ìˆ˜ì‹  í•¨ìˆ˜
     void OnMessage(NetId netId, const HNetPacket& Packet) override
     {
-        if (Packet.Type() == 777) {
-            // ÆÐÅ¶¿¡¼­ Á¤º¸ ¾ò±â.
+        if (Packet.Type() == 777)
+        {
+            // íŒ¨í‚·ì—ì„œ ì •ë³´ ì–»ê¸°.
             float   a1;
             float   a2;
             float   a3;
             Packet.Out(a1); //
-            Packet.Out(a2); // ¡æ Å¬¶óÀÌ¾ðÆ®·ÎºÎÅÍ ÆÐÅ¶ ¼ö½Å
+            Packet.Out(a2); // â†’ í´ë¼ì´ì–¸íŠ¸ë¡œë¶€í„° íŒ¨í‚· ìˆ˜ì‹ 
             Packet.Out(a3); //
 
-            // Å¬¶óÀÌ¾ðÆ®·Î ÆÐÅ¶ Á¤º¸ º¸³»±â.
+            // í´ë¼ì´ì–¸íŠ¸ë¡œ íŒ¨í‚· ì •ë³´ ë³´ë‚´ê¸°.
             HNET::NewPacket Out(666);
             Out->In(a1); //
-            Out->In(a2); // ¡æ ¸ðµç Å¬¶óÀÌ¾ðÆ®·Î ÆÐÅ¶ ¼Û½Å
+            Out->In(a2); // â†’ ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ë¡œ íŒ¨í‚· ì†¡ì‹ 
             Out->In(a3); //
             SendAll(Out);
             sent_record += 1;
 
-            // ÇöÀç ½Ã°£ Á¤º¸ ÀúÀå
+            // í˜„ìž¬ ì‹œê°„ ì •ë³´ ì €ìž¥
             time_t timer;
             struct tm* t;
             timer = time(NULL);
@@ -60,30 +63,28 @@ class CServer : public HNET::Acceptor
                 sc_sent = 0;
             }
 
-            printf(" pos: (%f, %f, %f)", a1, a2, a3);
+            //printf(" pos: (%f, %f, %f)", a1, a2, a3);
 
-            // ÆÐÅ¶ Àü¼Û ½ÃÁ¡ÀÇ ½Ã°£ Ãâ·Â
-            printf(" (%d:%d:%d)\n", t->tm_hour, t->tm_min, t->tm_sec);            
+            // íŒ¨í‚· ì „ì†¡ ì‹œì ì˜ ì‹œê°„ ì¶œë ¥
+            //printf(" (%d:%d:%d)\n", t->tm_hour, t->tm_min, t->tm_sec);            
 
-}
-        else if (Packet.Type() == 999) {
-            // ÆÐÅ¶¿¡¼­ Á¤º¸ ¾ò±â.
+        }
+        else if (Packet.Type() == 999)
+        {
+            // íŒ¨í‚·ì—ì„œ ì •ë³´ ì–»ê¸°.
             float   a1;
             float   a2;
-            float   a3;
             Packet.Out(a1); //
-            Packet.Out(a2); // ¡æ Å¬¶óÀÌ¾ðÆ®·ÎºÎÅÍ ÆÐÅ¶ ¼ö½Å
-            Packet.Out(a3); //
+            Packet.Out(a2); // â†’ í´ë¼ì´ì–¸íŠ¸ë¡œë¶€í„° íŒ¨í‚· ìˆ˜ì‹ 
 
-            // Å¬¶óÀÌ¾ðÆ®·Î ÆÐÅ¶ Á¤º¸ º¸³»±â.
+            // í´ë¼ì´ì–¸íŠ¸ë¡œ íŒ¨í‚· ì •ë³´ ë³´ë‚´ê¸°.
             HNET::NewPacket Out(888);
             Out->In(a1); //
-            Out->In(a2); // ¡æ ¸ðµç Å¬¶óÀÌ¾ðÆ®·Î ÆÐÅ¶ ¼Û½Å
-            Out->In(a3); //
+            Out->In(a2); // â†’ ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ë¡œ íŒ¨í‚· ì†¡ì‹ 
             SendAll(Out);
             sent_record += 1;
 
-            // ÇöÀç ½Ã°£ Á¤º¸ ÀúÀå
+            // í˜„ìž¬ ì‹œê°„ ì •ë³´ ì €ìž¥
             time_t timer;
             struct tm* t;
             timer = time(NULL);
@@ -94,12 +95,24 @@ class CServer : public HNET::Acceptor
                 sc_sent = 0;
             }
 
-            // ¼­¹ö ÄÜ¼Ö¿¡ ÆÐÅ¶ Ãâ·Â
-            printf(" dir: (%f, %f, %f)", a1, a2, a3);
+            // ì„œë²„ ì½˜ì†”ì— íŒ¨í‚· ì¶œë ¥
+            //printf(" dir: (%f, %f, %f)", a1, a2, a3);
 
-            // ÆÐÅ¶ Àü¼Û ½ÃÁ¡ÀÇ ½Ã°£ Ãâ·Â
-            printf(" (%d:%d:%d)\n", t->tm_hour, t->tm_min, t->tm_sec);
+            // íŒ¨í‚· ì „ì†¡ ì‹œì ì˜ ì‹œê°„ ì¶œë ¥
+            //printf(" (%d:%d:%d)\n", t->tm_hour, t->tm_min, t->tm_sec);
 
+        }
+        else if (Packet.Type() == 555)
+        {
+            //// íŒ¨í‚·ì—ì„œ ì •ë³´ ì–»ê¸°.
+            //float   a1;
+            //Packet.Out(a1); // â†’ í´ë¼ì´ì–¸íŠ¸ë¡œë¶€í„° íŒ¨í‚· ìˆ˜ì‹ 
+
+            // í´ë¼ì´ì–¸íŠ¸ë¡œ íŒ¨í‚· ì •ë³´ ë³´ë‚´ê¸°.
+            HNET::NewPacket Out(444);
+            //Out->In(a1); // â†’ ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ë¡œ íŒ¨í‚· ì†¡ì‹ 
+            SendAll(Out);
+            sent_record += 1;
         }
         else {
             return;
@@ -118,19 +131,21 @@ void main()
     _getch();
 }
 
-*/
+
+
+/*
 
 
 #define  _CRT_SECURE_NO_WARNINGS
 
-// ¶óÀÌºê·¯¸® °æ·Î ¼¼ÆÃ.(ÇÁ·ÎÁ§Æ® ÆÄÀÏ(.vcxproj)ÀÇ À§Ä¡¿¡¼­ÀÇ »ó´ë °æ·Î)
+// ë¼ì´ë¸ŒëŸ¬ë¦¬ ê²½ë¡œ ì„¸íŒ….(í”„ë¡œì íŠ¸ íŒŒì¼(.vcxproj)ì˜ ìœ„ì¹˜ì—ì„œì˜ ìƒëŒ€ ê²½ë¡œ)
 #define HNETWORK_LIB_PATH "../../HNetwork/Lib"
 
-// Çì´õ ÆÄÀÏ Æ÷ÇÔ.
+// í—¤ë” íŒŒì¼ í¬í•¨.
 #include "../../HNetwork/HNetwork.h"
 #include <ctime>
 
-// ¼­¹ö Á¤ÀÇ.
+// ì„œë²„ ì •ì˜.
 class CServer : public HNET::Acceptor
 {
 public: int sent_record = 0;
@@ -138,45 +153,48 @@ public: int sc_sent = 0;
 
       void OnConnect(NetId netId) override
       {
-          HAPI::PrintG(1, sent_record, L"- connect");
+          //HAPI::PrintG(1, sent_record, L"- connect");
           sent_record += 1;
           sc_sent += 1;
       }
 
       void OnDisconnect(NetId netId, const wchar_t* pReason) override
       {
-          HAPI::PrintR(1, sent_record, L"- disconnect");
+          //HAPI::PrintR(1, sent_record, L"- disconnect");
           sent_record += 1;
           sc_sent += 1;
       }
 
-      // ÆÐÅ¶ ¼ö½Å ÇÔ¼ö
+      // íŒ¨í‚· ìˆ˜ì‹  í•¨ìˆ˜
       void OnMessage(NetId netId, const HNetPacket& Packet) override
       {
           if (Packet.Type() == 777) {
-              // ÆÐÅ¶¿¡¼­ Á¤º¸ ¾ò±â.
+              // íŒ¨í‚·ì—ì„œ ì •ë³´ ì–»ê¸°.
               float   a1;
               float   a2;
               float   a3;
               float   b1;
               float   b2;
+              float   b3;
               Packet.Out(a1); //
-              Packet.Out(a2); // ¡æ Å¬¶óÀÌ¾ðÆ®·ÎºÎÅÍ ÆÐÅ¶ ¼ö½Å
+              Packet.Out(a2); // â†’ í´ë¼ì´ì–¸íŠ¸ë¡œë¶€í„° íŒ¨í‚· ìˆ˜ì‹ 
               Packet.Out(a3); //
               Packet.Out(b1); //
               Packet.Out(b2); //
+              Packet.Out(b3); //
 
-              // Å¬¶óÀÌ¾ðÆ®·Î ÆÐÅ¶ Á¤º¸ º¸³»±â.
+              // í´ë¼ì´ì–¸íŠ¸ë¡œ íŒ¨í‚· ì •ë³´ ë³´ë‚´ê¸°.
               HNET::NewPacket Out(666);
               Out->In(a1); //
               Out->In(a2); //
-              Out->In(a3); // ¡æ ¸ðµç Å¬¶óÀÌ¾ðÆ®·Î ÆÐÅ¶ ¼Û½Å
+              Out->In(a3); // â†’ ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ë¡œ íŒ¨í‚· ì†¡ì‹ 
               Out->In(b1); //
               Out->In(b2); //
+              Out->In(b3); //
               SendAll(Out);
               sent_record += 1;
 
-              // ÇöÀç ½Ã°£ Á¤º¸ ÀúÀå
+              // í˜„ìž¬ ì‹œê°„ ì •ë³´ ì €ìž¥
               time_t timer;
               struct tm* t;
               timer = time(NULL);
@@ -187,10 +205,10 @@ public: int sc_sent = 0;
                   sc_sent = 0;
               }
 
-              printf(" pos: (%f, %f, %f)", a1, a2, a3);
+              //printf(" pos: (%f, %f, %f)", a1, a2, a3);
 
-              // ÆÐÅ¶ Àü¼Û ½ÃÁ¡ÀÇ ½Ã°£ Ãâ·Â
-              printf(" (%d:%d:%d)\n", t->tm_hour, t->tm_min, t->tm_sec);
+              // íŒ¨í‚· ì „ì†¡ ì‹œì ì˜ ì‹œê°„ ì¶œë ¥
+              //printf(" (%d:%d:%d)\n", t->tm_hour, t->tm_min, t->tm_sec);
 
           } else {
               return;
@@ -208,3 +226,5 @@ void main()
 
     _getch();
 }
+
+*/
