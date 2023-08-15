@@ -1,9 +1,11 @@
 using System;
+using System.IO;
 using UnityEngine;
+
 public class D_Client : HNET.CHNetConnector // 클라이언트 정의
 {
-    public CharacterController SelectPlayer;
     public Vector3 vecDir;
+    public Vector3 pos;
     public bool jumping;
     public bool connect = false;
     public bool already_started = false;
@@ -14,10 +16,18 @@ public class D_Client : HNET.CHNetConnector // 클라이언트 정의
     public float b2 = 0.0f;
     public int count;
     public float constant;
+    public int packet_count;
+
+    string fullpth = "Assets/Others/test1";
+    StreamWriter sw;
 
     public void Start() {
         count = 0;
         constant = 0;
+
+        if (false == File.Exists(fullpth)) {
+            sw = new StreamWriter(fullpth + ".txt");
+        }
     }
     
     public override void OnConnect()    // 서버와 연결했을 때 실행
@@ -26,12 +36,16 @@ public class D_Client : HNET.CHNetConnector // 클라이언트 정의
     }
     public override void OnDisconnect() // 서버와의 연결을 해제했을 때 실행
     {
+        sw.WriteLine(packet_count);
+        sw.Flush();
+        sw.Close();
         UnityEngine.Debug.Log("▶ disconnect");  // 콘솔에 출력
     }
     public override void OnMessage(HNetPacket Packet)   // 패킷 수신 함수
     {
-        if (Packet.Type() == 888) // 패킷 타입이 888일 때
+        if (Packet.Type() == 888 && jumping == false) // 패킷 타입이 888일 때
         { 
+            packet_count += 1;
             Packet.Out(ref b1); //
             Packet.Out(ref b2); // → 서버의 패킷 수신
         }
@@ -40,7 +54,10 @@ public class D_Client : HNET.CHNetConnector // 클라이언트 정의
             Packet.Out(ref a1); //
             Packet.Out(ref a2); // → 서버의 패킷 수신
             Packet.Out(ref a3); //
-            transform.position = new Vector3(a1, a2, a3);
+            pos = gameObject.transform.position;
+            sw.WriteLine("pred: " + pos.x + ", " + pos.y + ", " + pos.z);
+            gameObject.transform.position = new Vector3(a1, a2, a3);
+            sw.WriteLine("real: " + a1 + ", " + a2 + ", " + a3);
         }
         else if (Packet.Type() == 444) {
             if (jumping == false) {
@@ -57,18 +74,21 @@ public class D_Client : HNET.CHNetConnector // 클라이언트 정의
     public void FixedUpdate()
     {
         if (jumping == true) {
-            if (count < 60)
+            if (count < 50)
             {
                 constant -= 0.2f;
             } 
             else
             {
+                constant = 0;
                 count = 0;
+                b1 = 0;
+                b2 = 0;
                 jumping = false;
             }
             count += 1;        
         }
-        SelectPlayer.Move((new Vector3(b1, constant, b2)) * Time.deltaTime); // 오브젝트의 이동 경로를 방향 벡터로 지정
+        gameObject.transform.Translate((new Vector3(b1, constant, b2)) * Time.deltaTime); // 오브젝트의 이동 경로를 방향 벡터로 지정
     }
 
     public void OnGUI() // 유니티 게임 화면의 버튼 기능 함수
