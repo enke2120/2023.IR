@@ -2,4 +2,4 @@
 Game Server Client Protocol Optimization Experiment / 2023 IR
 
 - realized by C++, C# and Unity Client
-- invented so-called 'path approximation method'
+- supported by HNetwork open source framework
