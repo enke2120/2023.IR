@@ -53,10 +53,9 @@ public class Client : HNET.CHNetConnector
             {
                 accessible = true;
                 InvokeRepeating("transmit_position", 0f, 1.0f);
-                //InvokeRepeating("transmit_direction", 0f, 0.2f);
                 already_started = true; // 이미 보내는 중이라 저장
             } else { // 이미 보내는 중이라면
-                //CancelInvoke("transmit_position"); // 패킷 전송 중지
+                CancelInvoke("transmit_position"); // 패킷 전송 중지
                 already_started = false; // 이미 보내는 중이 아니라 저장
             }
         }
@@ -67,6 +66,7 @@ public class Client : HNET.CHNetConnector
         if (Input.GetButton("Jump") && already_jumped == false)
         {
             transmit_jump();
+            Invoke("cover_dirChange", 1.0f);
         }
         
         if (starts[0] != Input.GetAxisRaw("Vertical") || starts[1] != Input.GetAxisRaw("Horizontal"))
@@ -78,11 +78,17 @@ public class Client : HNET.CHNetConnector
 
         current_angle = player.transform.eulerAngles.y;
 
-        if (Math.Abs(temp_angle - current_angle) > 4)
+        if (Math.Abs(temp_angle - current_angle) > 3) // 2 or 3 or 4
         {
             temp_angle = current_angle;
             transmit_direction();
         }
+    }
+
+    public void cover_dirChange()
+    {
+        starts[0] = 0;
+        starts[1] = 0;
     }
 
     // 패킷 송신 함수
@@ -95,6 +101,12 @@ public class Client : HNET.CHNetConnector
         Out.In(player.transform.position.y);
         Out.In(player.transform.position.z);
         Send(Out);
+
+        if (Input.GetAxisRaw("Vertical") == 0 || Input.GetAxisRaw("Horizontal") == 0) {
+            transmit_direction();
+            starts[0] = Input.GetAxisRaw("Vertical");
+            starts[1] = Input.GetAxisRaw("Horizontal");
+        }
 
         // 연결이 '거짓'이면
         if (connect == false)
