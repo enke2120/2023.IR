@@ -5,11 +5,10 @@ using UnityEngine;
 public class D_Client : HNET.CHNetConnector // 클라이언트 클래스 정의(HNetwork 클래스 상속)
 {
     public bool connect;               // 서버와의 연결 여부를 저장하는 변수
-    public int direction_packet_count; // 방향 패킷 전송 횟수 저장 변수
-    
     public Vector3 PlayerPosition; // 플레이어 오브젝트 위치 저장 변수
     public bool jumping;           // 플레이어 오브젝트가 점프 중인지를 저장하는 변수
-
+    public int count; // y좌표 설정에 사용할, 화면 갱신 횟수 저장 변수
+    
     // 위치 패킷 저장 변수
     public float received_x;
     public float received_y;
@@ -19,7 +18,6 @@ public class D_Client : HNET.CHNetConnector // 클라이언트 클래스 정의(
     public float delta_x;
     public float delta_y;
     public float delta_z;
-    public int count; // y좌표 설정에 사용할, 화면 갱신 횟수 저장 변수
     
     public void OnGUI() // 유니티 게임 화면의 버튼 기능 함수
     {
