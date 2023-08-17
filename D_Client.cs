@@ -24,13 +24,13 @@ public class D_Client : HNET.CHNetConnector // 클라이언트 클래스 정의(
         // 접속 버튼을 누르면
         if (GUI.Button(new Rect(200, 100, 300, 100), "접속"))   
         {
-            Connect();  // 서버와 클라이언트 연결
+            Connect();      // 서버와 클라이언트 연결
             connect = true; // 연결을 '참'으로 저장
         }
         if (GUI.Button(new Rect(200, 220, 300, 100), "끊기"))   // 끊기 버튼을 누르면
         {
-            Disconnect();   // 서버와 클라이언트의 연결 해제
-            connect = false;    // 연결을 '거짓'으로 저장
+            Disconnect();    // 서버와 클라이언트의 연결 해제
+            connect = false; // 연결을 '거짓'으로 저장
         }
     }
 
