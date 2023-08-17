@@ -55,13 +55,14 @@ public class Client : HNET.CHNetConnector // 클라이언트 클래스 정의(HN
         {
             transmit_jump();             // 점프 패킷 송신
             Invoke("input_reset", 1.0f); // 1초 후에 방향 초기화
+            already_jumped = true;
         }
 
         // 방향키가 입력되었다면
         if (Key_inputs[0] != Input.GetAxisRaw("Vertical") || Key_inputs[1] != Input.GetAxisRaw("Horizontal"))
         {
-            Key_inputs[0] = Input.GetAxisRaw("Vertical");   // 배열 갱신
-            Key_inputs[1] = Input.GetAxisRaw("Horizontal"); // ''
+            Key_inputs[0] = (int)Input.GetAxisRaw("Vertical");   // 배열 갱신
+            Key_inputs[1] = (int)Input.GetAxisRaw("Horizontal"); // ''
             transmit_direction();                           // 방향 패킷 송신
         }
 
@@ -80,6 +81,7 @@ public class Client : HNET.CHNetConnector // 클라이언트 클래스 정의(HN
     {
         Key_inputs[0] = 0;
         Key_inputs[1] = 0;
+        already_jumped = false;
     }
 
     public void transmit_position() // 위치 패킷 송신 함수
@@ -93,17 +95,6 @@ public class Client : HNET.CHNetConnector // 클라이언트 클래스 정의(HN
         Out.In(player.transform.position.z);
         Send(Out);
 
-        /*
-        
-        // 점프 이후의 움직임 처리
-        if (Input.GetAxisRaw("Vertical") == 0 || Input.GetAxisRaw("Horizontal") == 0) {
-            transmit_direction();
-            Key_inputs[0] = Input.GetAxisRaw("Vertical");
-            Key_inputs[1] = Input.GetAxisRaw("Horizontal");
-        }
-
-        */
-
         // 서버와의 연결이 해제되었으면
         if (connect == false) 
         {
@@ -116,15 +107,6 @@ public class Client : HNET.CHNetConnector // 클라이언트 클래스 정의(HN
     {
         // 999 타입의 패킷 송신
         HNET.NewPacket Out = new HNET.NewPacket(999); 
-
-        /*
-        
-        PlayerDirection.x = Input.GetAxisRaw("Horizontal");
-        PlayerDirection.z = Input.GetAxisRaw("Vertical");
-        PlayerDirection = player.transform.TransformDirection(PlayerDirection); //
-        PlayerDirection *= 5.0f; // 속력 연산
-
-        */
 
         // 플레이어의 이동 경로 계산
         PlayerDirection.x = Key_inputs[1];
