@@ -53,10 +53,8 @@ public class D_Client : HNET.CHNetConnector // 클라이언트 클래스 정의(
             sw.WriteLine("real: " + received_x + ", " + received_y + ", " + received_z);
         }
         else if (Packet.Type() == 444) {
-            if (jumping == false) {
-                jumping = true;
-                delta_y = 5f;
-            }            
+            jumping = true;
+            delta_y = 5f;         
         }
         else// 패킷 타입이 666도 888도 아닐 때
         {
